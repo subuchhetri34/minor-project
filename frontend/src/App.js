@@ -13,7 +13,7 @@ const App = () => {
   }, []);
 
   const fetchData = async () => {
-    const response = await axios.get('http://172.0.20.251:5000/api/data');
+    const response = await axios.get('http://192.168.100.47:5000/api/data');
     setData(response.data);
 
     // Check if any PPM value exceeds 500
