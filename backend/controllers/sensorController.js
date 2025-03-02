@@ -2,13 +2,20 @@ const SensorData = require('../models/SensorData');
 
 // Save sensor data
 exports.saveData = async (req, res) => {
-  const { ppm } = req.body;
+  const {UserId,  ppm } = req.body;
   try {
-    const newData = new SensorData({ ppm });
+    if(ppm===undefined){
+      res.status(200).json({message:"Error ppm is undefined"})
+    }
+    const newData = new SensorData().create({
+      ppm
+    });
     await newData.save();
     res.status(201).json(newData);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json(
+      
+      { error: err.message });
   }
 };
 
