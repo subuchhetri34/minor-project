@@ -1,30 +1,30 @@
-const SensorData = require('../models/SensorData');
+import SensorData from "../models/SensorData.js";
 
-// Save sensor data
-exports.saveData = async (req, res) => {
-  const {UserId,  ppm } = req.body;
+export const saveData = async (req, res) => {
+  const { ppm } = req.body;
+
+  if (typeof ppm !== "number" || ppm < 0) {
+    return res
+      .status(400)
+      .json({ message: "Invalid ppm value. Must be a non-negative number." });
+  }
+
+  const newData = new SensorData({ ppm });
+  const savedData = await newData.save();
+
+  console.log("New Sensor Data Saved:", savedData);
+
+  res.status(201).json({
+    message: "Sensor data saved successfully",
+    data: savedData,
+  });
+};
+export const getData = async (req, res) => {
   try {
-    if(ppm===undefined){
-      res.status(200).json({message:"Error ppm is undefined"})
-    }
-    const newData = new SensorData().create({
-      ppm
-    });
-    await newData.save();
-    res.status(201).json(newData);
+    const data = await SensorData.find().sort({ createdAt: -1 });
+    res.status(201).json({ message: data });
   } catch (err) {
-    res.status(500).json(
-      
-      { error: err.message });
+    res.status(500).json({ message: err.message });
   }
 };
 
-// Get all sensor data
-exports.getData = async (req, res) => {
-  try {
-    const data = await SensorData.find().sort({ timestamp: -1 });
-    res.status(200).json(data);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
